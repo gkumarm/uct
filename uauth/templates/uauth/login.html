@@ -1,0 +1,22 @@
+<!--users/templates/registration/login.html-->
+{% extends './base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{{ form.media }}
+<br>
+<div class="container">
+	<div class="jumbotron">
+		<h1 class="display-6">Login Here:</h1>
+		<hr class="my-4">
+
+		<form method="post" action="{% url 'uauth:user_login' %}">
+			{% csrf_token %}
+			{# A more "HTML" way of creating the login form#}
+			<label for="username">Username:</label><input type="text" name="username" placeholder="Username">
+			<label for="password">Password:</label><input type="password" name="password" placeholder="Password">
+			<input type="submit" name="" value="Login">
+		</form>
+	</div>
+</div>
+{% endblock %}

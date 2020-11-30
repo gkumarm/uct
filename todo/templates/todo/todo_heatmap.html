@@ -1,0 +1,212 @@
+{% extends "uauth/base.html" %}
+{% load todo_extras %}
+
+{% block content %}
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+<br>
+<div class="container">
+<div class="row row-g">
+  <div class="col">
+    <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
+    <tr valign="middle" class="st">
+        <td align="left" class="NormalText">
+          <a class="btn btn-outline-primary" href="{% url 'todo_index' %}" data-toggle="tooltip" title="View Tabular">
+            <span class="oi oi-spreadsheet"></span></a>
+        </td> 
+
+        <td align="middle">
+          {% for u in res %}
+            {% if forloop.first %}            
+              {% if request.session.filter_val == "mylist" %}
+                <button type="button" class="btn btn-primary" disabled="disabled">My Items</button>
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>
+                <select id="selto" class="selectpicker show-tick" 
+                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">            
+              {% elif request.session.filter_val == "grplist" %}
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                <button type="button" class="btn btn-primary" disabled="disabled">Group List</button>
+                <select id="selto" class="selectpicker show-tick"
+                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">        
+              {% elif request.session.filter_val %}
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>    
+                <select id="selto" class="selectpicker show-tick" data-style="btn-primary" 
+                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">
+              {% endif %}
+            {% endif %}
+
+            {% if request.session.filter_val == u.user.username %}
+              <option value="{{ u.user }}" selected>{{ u.res_name }}</option>
+            {% else %}
+              <option value="{{ u.user }}">{{ u.res_name }}</option>
+            {% endif %}
+          {% empty %}
+          {% endfor %}
+                </select>          
+        </td>
+       
+        <td align="right" class="NormalText">
+          <a class="btn btn-outline-primary" href="{% url 'todo_create' %}" data-toggle="tooltip" title="Create new item">
+            <span class="oi oi-plus"></span></a>
+          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Edit selected item"
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_edit/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-pencil"></span>
+          </a>
+          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Copy selected item as..."
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_copyas/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-fork"></span>
+          </a>
+          <a class="btn btn-outline-success" data-toggle="tooltip" title="Mark selected item completed"
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_close/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-task"></span>
+          </a>&nbsp;&nbsp;
+          <a class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected item"
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_delete/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-trash"></span>
+          </a>          
+        </td>
+    </tr>
+    </table>
+  </div>
+</div>
+<svg width="585" height="{% widthratio 25 1 hm_list.1|length %}" class="tt" style="border:1px solid red">
+  <g transform="translate(110, 70)">
+    {% for values in hm_list.1 %}
+      {% if forloop.first %}
+        <g transform="translate(0, -5)">
+          {% for v in hm_list.0 %}
+            {% if forloop.first %}
+              <text text-anchor="start" font-weight="bold" class="wday" x="-99" y="8">Name</text>
+            {% else %}
+              <text text-anchor="start" font-weight="bold" transform="rotate(90)" class="wday" 
+                x="-60" y="{% widthratio -15 1 forloop.counter|add:'-1' %}">{{v}}</text>
+            {% endif %}
+          {% endfor %}
+        </g>
+      {% endif %}
+
+      <g transform="translate(0, {% widthratio 15 1 forloop.counter %})">
+        {% for v in values %}
+          {% if forloop.first %}
+            <text text-anchor="start" class="wday" dx="-99" dy="8">{{v|slugify}}</text>
+          {% else %}
+            {% if v|slugify == "-1" %}
+              <rect class="day" width="10" height="10" x="{% widthratio 15 1 forloop.counter|add:'-1' %}" y="0"
+                fill="var(--color-heatmap-day-weekend)" data-name="{{ values.0 }}" data-value="{{ v }}" 
+                data-date="{{hm_list.0|get_name_by_index:forloop.counter}}"/>
+                <title class="tooltiptext">{{values.0}} | {{hm_list.0|get_name_by_index:forloop.counter}} | Weekend</title></rect>
+            {% elif v|slugify == "-2" %}
+              <rect class="day" width="10" height="10" x="{% widthratio 15 1 forloop.counter|add:'-1' %}" y="0"
+                fill="var(--color-heatmap-day-leave)" data-name="{{ values.0 }}" data-value="{{ v }}"
+                data-date="{{hm_list.0|get_name_by_index:forloop.counter}}">
+                <title class="tooltiptext">{{values.0}} | {{hm_list.0|get_name_by_index:forloop.counter}} | Leave</title></rect>
+            {% elif v|slugify == "-3" %}
+              <rect class="day" width="10" height="10" x="{% widthratio 15 1 forloop.counter|add:'-1' %}" y="0"
+                fill="var(--color-heatmap-day-holiday)" data-name="{{ values.0 }}" data-value="{{ v }}"
+                data-date="{{hm_list.0|get_name_by_index:forloop.counter}}">
+                <title class="tooltiptext">{{values.0}} | {{hm_list.0|get_name_by_index:forloop.counter}} | Holiday</title></rect>
+            {% elif v|slugify == "0" %}
+              <rect class="day" width="10" height="10" x="{% widthratio 15 1 forloop.counter|add:'-1' %}" y="0"
+                fill="var(--color-heatmap-day-L0)" data-name="{{ values.0 }}" data-value="{{ v }}"
+                data-date="{{hm_list.0|get_name_by_index:forloop.counter}}">
+                <title class="tooltiptext">{{values.0}} | {{hm_list.0|get_name_by_index:forloop.counter}} | No assignment</title></rect>
+            {% elif v|slugify == "1" %}
+              <rect class="day" width="10" height="10" x="{% widthratio 15 1 forloop.counter|add:'-1' %}" y="0"
+                fill="var(--color-heatmap-day-L1)" data-name="{{ values.0 }}" data-value="{{ v }}"
+                data-date="{{hm_list.0|get_name_by_index:forloop.counter}}">
+                <title class="tooltiptext">{{values.0}} | {{hm_list.0|get_name_by_index:forloop.counter}} | Moderate engagement</title></rect>
+            {% elif v|slugify == "2" %}
+              <rect class="day" width="10" height="10" x="{% widthratio 15 1 forloop.counter|add:'-1' %}" y="0"
+                fill="var(--color-heatmap-day-L2)" data-name="{{ values.0 }}" data-value="{{ v }}"
+                data-date="{{hm_list.0|get_name_by_index:forloop.counter}}">
+                <title class="tooltiptext">{{values.0}} | {{hm_list.0|get_name_by_index:forloop.counter}} | Multiple engagement</title></rect>
+            {% else %}
+              <rect class="day" width="10" height="10" x="{% widthratio 15 1 forloop.counter|add:'-1' %}" y="0"
+                fill="var(--color-heatmap-day-L4)" data-name="{{ values.0 }}" data-value="{{ v }}"
+                data-date="{{hm_list.0|get_name_by_index:forloop.counter}}">
+                <title class="tooltiptext">{{values.0}} | {{hm_list.0|get_name_by_index:forloop.counter}} | High engagement</title></rect>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </g>
+    {% endfor %}
+  </g>
+</svg>
+<br>
+<div class="row row-g">
+  <div class="col">
+    <table id="actionPanel" width="585" cellpadding="1" cellspacing="0" border="0" class="ta">
+    <tr valign="middle" class="st">
+      <td align="left" class="NormalText">
+        <a class="btn btn-outline-primary" href="javascript:void(0)" data-toggle="tooltip" title="Previous 30 days"
+           onclick="hmAction('prev', {% url 'todo_heatmap' %})">
+          <span class="oi oi-chevron-left"></span>
+        </a>
+      </td>
+
+      <td align="middle" class="NormalText">
+        <div class="btn-group" role="group">
+          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Current date onwards"
+            onclick="hmAction('today', {% url 'todo_heatmap' %})">
+            <span class="oi oi-home"></span>            
+          </a>&nbsp;          
+          <input type="text" name="from_date" autocomplete="off" placeholder="Select a from date" title="From Date"
+              class="datepicker dateinput form-control" id="id_from_date" value="{{hm_list.2}}"/>&nbsp;
+          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Update data"
+            onclick="hmAction('option', {% url 'todo_heatmap' %})">Go</a>
+          </a>              
+        </div>
+        </div>
+      </td>
+      <td align="right" class="NormalText">
+        <a class="btn btn-outline-primary" href="javascript:void(0)" data-toggle="tooltip" title="Next 30 days"
+           onclick="hmAction('next', {% url 'todo_heatmap' %})">
+          <span class="oi oi-chevron-right"></span>
+        </a>
+      </td>
+    </tr>
+    </table>
+  </div>
+</div>
+<script type="text/javascript">
+  $("#id_from_date").datetimepicker({
+      format:'d-M-Y',timepicker: false
+  });
+
+  sliders = document.querySelectorAll("rect");
+  sliders.forEach(item=> {
+    item.addEventListener('mouseover', (e) => {
+      var o=e.target;
+      o.style.stroke = "#ff0000";
+      o.style.strokeWidth = "1";
+//      console.log(`${item.getAttribute("data-count")} is this value`);
+    });
+    
+    item.addEventListener('mouseout', (e) => {
+      var o=e.target;
+      o.style.stroke = "#000000";
+      o.style.strokeWidth = "0";
+    });   
+    item.addEventListener('click', (e) => {
+        var svgobj=e.target;
+//        svgobj.setAttribute ('style', "stroke = #ff0000;stroke-width: 1");    
+    svgobj.style.stroke = "#ff0000";
+    svgobj.style.strokeWidth = "1";
+    alert(svgobj.getAttribute("data-name") + svgobj.getAttribute("data-date") + svgobj.getAttribute("data-value"))
+//      item.nextElementSibling.textContent = e.target.value;
+    });   
+
+  })
+</script>
+<div class="tt">Text<span class="tooltiptext">Tooltip text</span></div>
+</div>
+
+{% endblock %}

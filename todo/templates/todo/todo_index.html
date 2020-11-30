@@ -1,0 +1,158 @@
+{% extends "uauth/base.html" %}
+
+{% block content %}
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+<br>
+<div class="container">
+<div class="row row-g">
+  <div class="col">
+    <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
+    <tr valign="middle" class="st">
+        <td align="left" class="NormalText">
+          <a class="btn btn-outline-primary" href="{% url 'todo_heatmap' %}" data-toggle="tooltip" title="View Heatmap">
+            <span class="oi oi-bar-chart"></span></a>
+        </td>              
+        <td align="middle">
+          {% for u in res %}
+            {% if forloop.first %}            
+              {% if request.session.filter_val == "mylist" %}
+                <button type="button" class="btn btn-primary" disabled="disabled">My Items</button>
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>
+                <select id="selto" class="selectpicker show-tick" 
+                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">            
+              {% elif request.session.filter_val == "grplist" %}
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                <button type="button" class="btn btn-primary" disabled="disabled">Group List</button>
+                <select id="selto" class="selectpicker show-tick"
+                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">        
+              {% elif request.session.filter_val %}
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>    
+                <select id="selto" class="selectpicker show-tick" data-style="btn-primary" 
+                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">
+              {% endif %}
+            {% endif %}
+
+            {% if request.session.filter_val == u.user.username %}
+              <option value="{{ u.user }}" selected>{{ u.res_name }}</option>
+            {% else %}
+              <option value="{{ u.user }}">{{ u.res_name }}</option>
+            {% endif %}
+          {% empty %}
+          {% endfor %}
+                </select>          
+        </td>
+        <td align="right" class="NormalText">
+          <a class="btn btn-outline-primary" href="{% url 'todo_create' %}" data-toggle="tooltip" title="Create new item"><span class="oi oi-plus"></span></a>
+          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Edit selected item"
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_edit/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-pencil"></span>
+          </a>
+          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Copy selected item as..."
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_copyas/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-fork"></span>
+          </a>
+          <a class="btn btn-outline-success" data-toggle="tooltip" title="Mark selected item completed"
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_close/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-task"></span>
+          </a>&nbsp;&nbsp;
+          <a class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected item"
+             href="javascript:void(0)"
+             onclick="getActionButtonClicked(document.form1, '/todo_delete/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             <span class="oi oi-trash"></span>
+          </a>          
+        </td>
+    </tr>
+    </table>
+  </div>
+</div>
+
+<form name="form1">
+<table class="table table-sm table-striped">
+  <thead>
+    <tr>
+      <th style="width: 2%" scope="col">#</th>
+      <th style="width: 48%" scope="col">Description</th>
+      <th style="width: 15%" scope="col">Assigned To</th>
+      <th style="width: 20%" scope="col">Start/End Date</th>
+      <th style="width: 15%" scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for todo in todo_list %}
+  {% if forloop.first %}
+  {% endif %}  
+    <tr>
+      <td><input type="RADIO" id="pk_radio" value="{{ todo.pk }}"/></th>
+      <td><a href="{% url 'todo_edit' todo.pk %}">{{ todo.short_desc }}</a></td>
+      <td>{{ todo.assigned_to.user.username }}</td>
+      <td>{{ todo.start_date|date:"d-M-Y"|default:"-" }}/{{ todo.end_date|date:"d-M-Y"|default:"-" }}</td>
+      <td>{{ todo.status|default:"-" }}</td>
+    </tr>
+{% empty %}
+    <tr>
+      <td>&nbsp;</th>
+      <td colspan="4"><h5><span class="badge badge-warning"></span></h5></th>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+</form>
+
+
+<div class="row row-g">
+  <div class="col">
+    <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
+    <tr valign="middle" class="st">
+        {% if is_paginated %}
+          <td align="left" colspan="2">
+             <h5><span class="badge badge-warning">Page {{ page_obj.number }} of {{page_obj.paginator.num_pages}}</span></h5>
+          </td>
+
+          <td align="right" class="NormalText">
+            <div class="btn-group" role="group">
+              {% if page_obj.has_previous %}
+                <a class="btn btn-secondary" href="?page={{ page_obj.previous_page_number }}">&laquo;<i class="fas fa-angle-left"></i></a>
+              {% else %}
+                <button type="button" class="btn btn-secondary" disabled="disabled">&laquo;<i class="fas fa-angle-left"></i></button>
+              {% endif %}
+
+              {% if temp_rule_to_unhide %}
+                {% for linkpage in paginator.page_range %}
+                  {% ifequal linkpage page_obj.number %}
+                    <button type="button" class="btn btn-secondary active" >{{ page_obj.number }}</button>
+                  {% else %}
+                    <a class="btn btn-secondary" href="{{ request.path }}?page={{ linkpage }}">{{ linkpage }}</a>
+                  {% endifequal %}
+                {% endfor %}
+              {% endif %}
+
+              {% if page_obj.has_next %}
+                <a class="btn btn-secondary" href="{{ request.path }}?page={{ page_obj.next_page_number }}">&raquo;</a>
+              {% else %}
+                <button type="button" class="btn btn-secondary" disabled="disabled"><span>&raquo;</span></button>
+              {% endif %}
+            </div>
+          </td>
+        {% elif todo_list %}
+          <td align="left" colspan="2">
+             <h5><span class="badge badge-warning">Page {{ page_obj.number }} of {{page_obj.paginator.num_pages}}</span></h5>
+          </td>
+        {% else %}
+          <td align="left" colspan="2">
+             <h5><span class="badge badge-warning">No items found</span></h5>
+          </td>        
+        {% endif %}          
+        </tr>
+      </table>
+    </div>
+</div>
+</div>
+{% endblock %}

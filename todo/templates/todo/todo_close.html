@@ -1,0 +1,22 @@
+{% extends "uauth/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{{ form.media }}
+<br>
+<div class="container">
+<div class="jumbotron">
+    <h1 class="display-6">Complete TODO</h1>
+    <hr class="my-4">
+    {% crispy form %}
+<script type="text/javascript">
+	$("#id_start_date").datetimepicker({
+      format:'d-M-Y',timepicker: false
+	});
+	$("#id_end_date").datetimepicker({
+      format:'d-M-Y',timepicker: false
+	});	
+</script>    
+  </div>
+</div>
+{% endblock %}
