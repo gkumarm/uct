@@ -50,22 +50,22 @@ $(function () {
           <a class="btn btn-outline-primary" href="{% url 'todo_create' %}" data-toggle="tooltip" title="Create new item"><span class="oi oi-plus"></span></a>
           <a class="btn btn-outline-primary" data-toggle="tooltip" title="Edit selected item"
              href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '/todo_edit/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             onclick="getActionButtonClicked(document.form1, '{% url 'todo_edit' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
              <span class="oi oi-pencil"></span>
           </a>
           <a class="btn btn-outline-primary" data-toggle="tooltip" title="Copy selected item as..."
              href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '/todo_copyas/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             onclick="getActionButtonClicked(document.form1, '{% url 'todo_copyas' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
              <span class="oi oi-fork"></span>
           </a>
           <a class="btn btn-outline-success" data-toggle="tooltip" title="Mark selected item completed"
              href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '/todo_close/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             onclick="getActionButtonClicked(document.form1, '{% url 'todo_close' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
              <span class="oi oi-task"></span>
           </a>&nbsp;&nbsp;
           <a class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected item"
              href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '/todo_delete/', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+             onclick="getActionButtonClicked(document.form1, '{% url 'todo_delete' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
              <span class="oi oi-trash"></span>
           </a>          
         </td>
