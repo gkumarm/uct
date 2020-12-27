@@ -4,19 +4,71 @@
 
 {% block content %}
 {{ form.media }}
-<br>
-<div class="container">
-	<div class="jumbotron">
-		<h1 class="display-6">Login Here:</h1>
-		<hr class="my-4">
+<style>
+.card0 {
+    box-shadow: 0px 4px 8px 0px #757575;
+    border-radius: 0px
+}
 
-		<form method="post" action="{% url 'uauth:user_login' %}">
-			{% csrf_token %}
-			{# A more "HTML" way of creating the login form#}
-			<label for="username">Username:</label><input type="text" name="username" placeholder="Username">
-			<label for="password">Password:</label><input type="password" name="password" placeholder="Password">
-			<input type="submit" name="" value="Login">
-		</form>
-	</div>
-</div>
+.card2 {
+    margin: 0px 40px
+}
+</style>
+<br>
+
+<div class="container px-1 px-md-5 px-lg-1 px-xl-5 py-5 mx-auto">
+	<div class="card card0">
+		<div class="row d-flex justify-content-center align-items-center">
+			<div class="col-lg-6">
+				<div class="card pb-5">
+<!--					<div class="row"> <img src="D:\Projects\django\src\static\uct\img\todoapp.png" class="logo"> </div> -->
+					<div class="row px-3 justify-content-center mt-4 mb-5 "><img src="/static/uct/img/signin-image.jpg" class="image"></div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="card2 card border-0 px-4 py-5">
+					<article class="card-body">
+						<p class="text-danger bg-warning text-center"><b>{{ errmsg }}</b></p>						
+						<h1 class="card-title display-5 text-center mb-4 mt-1">Sign in</h1>
+						<hr>
+						<p class="text-success text-center">Sign in to the world of your possibilities</p>
+						<form method="post" action="{% url 'uauth:user_login' %}">
+							{% csrf_token %}
+							<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><span class="oi oi-person"></span></span>
+									</div>
+									<input name="username" class="form-control" placeholder="Email or login" type="text"> <!-- type="email"> -->
+								</div> <!-- input-group.// -->
+							</div> <!-- form-group// -->
+							<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-prepend">
+
+										<span class="input-group-text"> <span class="oi oi-lock-locked"></span></span>
+									</div>
+									<input name="password" class="form-control" placeholder="******" type="password">
+								</div> <!-- input-group.// -->
+							</div> <!-- form-group// -->
+							<div class="form-group">
+								<div class="row px-3 mb-4">
+									<div class="custom-control custom-checkbox custom-control-inline">
+										<input id="chk2" type="checkbox" name="chk" class="custom-control-input">
+										<label for="chk2" class="custom-control-label text-sm">Remember me</label>
+									</div>
+									<a href="#" class="ml-auto mb-0 text-sm">Forgot Password?</a>
+								</div> <!-- row px-3 mb-4// -->  
+							</div> <!-- form-group// -->  
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary btn-block"> Login  </button>
+							</div> <!-- form-group// -->
+						</form>
+					</article>
+				</div> <!-- card.// -->
+			</div>
+		</div> <!-- <div class="row" //-->
+	</div> <!-- <div class="card"// -->
+</div> <!-- div class="container"// -->
+
 {% endblock %}
