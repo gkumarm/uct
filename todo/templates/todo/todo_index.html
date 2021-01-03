@@ -78,10 +78,11 @@ $(function () {
 <table class="table table-sm table-striped">
   <thead>
     <tr>
-      <th style="width: 2%" scope="col">#</th>
-      <th style="width: 48%" scope="col">Description</th>
-      <th style="width: 15%" scope="col">Assigned To</th>
-      <th style="width: 20%" scope="col">Start/End Date</th>
+      <th style="width:  2%" scope="col">#</th>
+      <th style="width: 43%" scope="col">Description</th>
+      <th style="width: 10%" scope="col">Assigned To</th>
+      <th style="width: 15%" scope="col">Start/End Date</th>
+      <th style="width: 15%" scope="col">Todo Type</th>
       <th style="width: 15%" scope="col">Status</th>
     </tr>
   </thead>
@@ -93,7 +94,8 @@ $(function () {
       <td><input type="RADIO" id="pk_radio" value="{{ todo.pk }}"/></th>
       <td><a href="{% url 'todo_edit' todo.pk %}">{{ todo.short_desc }}</a></td>
       <td>{{ todo.assigned_to.user.username }}</td>
-      <td>{{ todo.start_date|date:"d-M-Y"|default:"-" }}/{{ todo.end_date|date:"d-M-Y"|default:"-" }}</td>
+      <td>S:{{ todo.start_date|date:"d-M-Y"|default:"-" }}<br>E:{{ todo.end_date|date:"d-M-Y"|default:"-" }}</td>
+      <td>{{ todo.todo_type|default:"-" }}</td>
       <td>{{ todo.status|default:"-" }}</td>
     </tr>
 {% empty %}
