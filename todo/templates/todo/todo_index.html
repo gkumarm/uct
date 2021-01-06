@@ -7,110 +7,109 @@ $(function () {
 })
 </script>
 <br>
-<div class="container">
-<div class="row row-g">
-  <div class="col">
-    <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
-    <tr valign="middle" class="st">
-        <td align="left" class="NormalText">
-          <a class="btn btn-outline-primary" href="{% url 'todo_heatmap' %}" data-toggle="tooltip" title="View Heatmap">
-            <span class="oi oi-bar-chart"></span></a>
-        </td>              
-        <td align="middle">
-          {% for u in res %}
-            {% if forloop.first %}            
-              {% if request.session.filter_val == "mylist" %}
-                <button type="button" class="btn btn-primary" disabled="disabled">My Items</button>
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>
-                <select id="selto" class="selectpicker show-tick" 
-                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">            
-              {% elif request.session.filter_val == "grplist" %}
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
-                <button type="button" class="btn btn-primary" disabled="disabled">Group List</button>
-                <select id="selto" class="selectpicker show-tick"
-                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">        
-              {% elif request.session.filter_val %}
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>    
-                <select id="selto" class="selectpicker show-tick" data-style="btn-primary" 
-                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">
+<div class="container-fluid ">  <!-- <div class="container-fluid "> -->
+  <div class="row"> <!-- <div class="row"> -->
+    <div class="col-1">&nbsp;</div>
+    <div class="col-10"> <!-- <div class="col-10"> -->
+      <div class="col row-g">
+      <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
+      <tr valign="middle" class="st">
+          <td align="left" class="NormalText">
+            <a class="btn btn-outline-primary" href="{% url 'todo_heatmap' %}" data-toggle="tooltip" title="View Heatmap">
+              <span class="oi oi-bar-chart"></span></a>
+          </td>              
+          <td align="middle">
+            {% for u in res %}
+              {% if forloop.first %}            
+                {% if request.session.filter_val == "mylist" %}
+                  <button type="button" class="btn btn-primary" disabled="disabled">My Items</button>
+                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>
+                  <select id="selto" class="selectpicker show-tick" 
+                    title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">            
+                {% elif request.session.filter_val == "grplist" %}
+                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                  <button type="button" class="btn btn-primary" disabled="disabled">Group List</button>
+                  <select id="selto" class="selectpicker show-tick"
+                    title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">        
+                {% elif request.session.filter_val %}
+                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>    
+                  <select id="selto" class="selectpicker show-tick" data-style="btn-primary" 
+                    title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">
+                {% endif %}
               {% endif %}
-            {% endif %}
 
-            {% if request.session.filter_val == u.user.username %}
-              <option value="{{ u.user }}" selected>{{ u.res_name }}</option>
-            {% else %}
-              <option value="{{ u.user }}">{{ u.res_name }}</option>
-            {% endif %}
+              {% if request.session.filter_val == u.user.username %}
+                <option value="{{ u.user }}" selected>{{ u.res_name }}</option>
+              {% else %}
+                <option value="{{ u.user }}">{{ u.res_name }}</option>
+              {% endif %}
+            {% empty %}
+            {% endfor %}
+                  </select>          
+          </td>
+          <td align="right" class="NormalText">
+            <a class="btn btn-outline-primary" href="{% url 'todo_create' %}" data-toggle="tooltip" title="Create new item"><span class="oi oi-plus"></span></a>
+            <a class="btn btn-outline-primary" data-toggle="tooltip" title="Edit selected item"
+               href="javascript:void(0)"
+               onclick="getActionButtonClicked(document.form1, '{% url 'todo_edit' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+               <span class="oi oi-pencil"></span>
+            </a>
+            <a class="btn btn-outline-primary" data-toggle="tooltip" title="Copy selected item as..."
+               href="javascript:void(0)"
+               onclick="getActionButtonClicked(document.form1, '{% url 'todo_copyas' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+               <span class="oi oi-fork"></span>
+            </a>
+            <a class="btn btn-outline-success" data-toggle="tooltip" title="Mark selected item completed"
+               href="javascript:void(0)"
+               onclick="getActionButtonClicked(document.form1, '{% url 'todo_close' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+               <span class="oi oi-task"></span>
+            </a>&nbsp;&nbsp;
+            <a class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected item"
+               href="javascript:void(0)"
+               onclick="getActionButtonClicked(document.form1, '{% url 'todo_delete' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
+               <span class="oi oi-trash"></span>
+            </a>          
+          </td>
+      </tr>
+      </table>
+    </div>
+
+    <form name="form1">
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th style="width:  2%" scope="col">#</th>
+            <th style="width: 43%" scope="col">Description</th>
+            <th style="width: 10%" scope="col">Assigned To</th>
+            <th style="width: 15%" scope="col">Start/End Date</th>
+            <th style="width: 15%" scope="col">Todo Type</th>
+            <th style="width: 15%" scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for todo in todo_list %}
+          {% if forloop.first %}
+          {% endif %}  
+          <tr>
+            <td><input type="RADIO" name="pk_radio" id="pk_radio" value="{{ todo.pk }}"/></td>
+            <td><a href="{% url 'todo_edit' todo.pk %}">{{ todo.short_desc }}</a></td>
+            <td>{{ todo.assigned_to.user.username }}</td>
+            <td>{{ todo.start_date|date:"d-M-Y"|default:"-" }}/{{ todo.end_date|date:"d-M-Y"|default:"-" }}</td>
+            <td>{{ todo.todo_type|default:"-" }}</td>
+            <td>{{ todo.status|default:"-" }}</td>
+          </tr>
           {% empty %}
+          <tr>
+            <td>&nbsp;</td>
+            <td colspan="5"><h5><span class="badge badge-warning"></span></h5></td>
+          </tr>
           {% endfor %}
-                </select>          
-        </td>
-        <td align="right" class="NormalText">
-          <a class="btn btn-outline-primary" href="{% url 'todo_create' %}" data-toggle="tooltip" title="Create new item"><span class="oi oi-plus"></span></a>
-          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Edit selected item"
-             href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '{% url 'todo_edit' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
-             <span class="oi oi-pencil"></span>
-          </a>
-          <a class="btn btn-outline-primary" data-toggle="tooltip" title="Copy selected item as..."
-             href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '{% url 'todo_copyas' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
-             <span class="oi oi-fork"></span>
-          </a>
-          <a class="btn btn-outline-success" data-toggle="tooltip" title="Mark selected item completed"
-             href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '{% url 'todo_close' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
-             <span class="oi oi-task"></span>
-          </a>&nbsp;&nbsp;
-          <a class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected item"
-             href="javascript:void(0)"
-             onclick="getActionButtonClicked(document.form1, '{% url 'todo_delete' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
-             <span class="oi oi-trash"></span>
-          </a>          
-        </td>
-    </tr>
-    </table>
-  </div>
-</div>
+        </tbody>
+      </table>
+    </form>
 
-<form name="form1">
-<table class="table table-sm table-striped">
-  <thead>
-    <tr>
-      <th style="width:  2%" scope="col">#</th>
-      <th style="width: 43%" scope="col">Description</th>
-      <th style="width: 10%" scope="col">Assigned To</th>
-      <th style="width: 15%" scope="col">Start/End Date</th>
-      <th style="width: 15%" scope="col">Todo Type</th>
-      <th style="width: 15%" scope="col">Status</th>
-    </tr>
-  </thead>
-  <tbody>
-{% for todo in todo_list %}
-  {% if forloop.first %}
-  {% endif %}  
-    <tr>
-      <td><input type="RADIO" id="pk_radio" value="{{ todo.pk }}"/></th>
-      <td><a href="{% url 'todo_edit' todo.pk %}">{{ todo.short_desc }}</a></td>
-      <td>{{ todo.assigned_to.user.username }}</td>
-      <td>S:{{ todo.start_date|date:"d-M-Y"|default:"-" }}<br>E:{{ todo.end_date|date:"d-M-Y"|default:"-" }}</td>
-      <td>{{ todo.todo_type|default:"-" }}</td>
-      <td>{{ todo.status|default:"-" }}</td>
-    </tr>
-{% empty %}
-    <tr>
-      <td>&nbsp;</th>
-      <td colspan="4"><h5><span class="badge badge-warning"></span></h5></th>
-    </tr>
-{% endfor %}
-  </tbody>
-</table>
-</form>
-
-
-<div class="row row-g">
-  <div class="col">
+  <div class="col row-g">
     <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
     <tr valign="middle" class="st">
         {% if is_paginated %}
@@ -155,6 +154,9 @@ $(function () {
         </tr>
       </table>
     </div>
-</div>
-</div>
+
+    </div> <!-- <div class="col-10"> -->
+    <div class="col-1">&nbsp;</div>
+  </div> <!-- <div class="row"> -->
+</div>  <!-- <div class="container-fluid "> -->
 {% endblock %}
