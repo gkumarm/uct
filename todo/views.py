@@ -48,6 +48,19 @@ class TodoIndexView(ListView):
     else: # Assume parameter is for Assign To
       filters = Q(group__id__in=grp)
       filters.add (Q(assigned_to__user__username=filter_param), Q.AND)
+
+    ## Append base status filter for Status [All/Completed/Non-Completed]
+    status_param = self.request.GET.get ('status', self.request.session.get ('status_val', 'open'))
+    if status_param == 'all':
+      # No filter based on status
+      self.request.session['status_val'] = status_param
+    elif status_param == 'completed':
+      self.request.session['status_val'] = status_param
+      filters.add (Q(status_id__code='COM'), Q.AND)
+    else:
+      self.request.session['status_val'] = status_param
+      filters.add (~Q(status_id__code='COM'), Q.AND)
+
     print ('10---------->Filters', filters)
     
     ob = ['-added_date', 'context_id']

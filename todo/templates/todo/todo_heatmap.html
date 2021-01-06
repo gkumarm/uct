@@ -13,41 +13,6 @@ $(function () {
   <div class="col">
     <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
     <tr valign="middle" class="st">
-        <td align="left" class="NormalText">
-          <a class="btn btn-outline-primary" href="{% url 'todo_index' %}" data-toggle="tooltip" title="View Tabular">
-            <span class="oi oi-spreadsheet"></span></a>
-        </td> 
-
-        <td align="middle">
-          {% for u in res %}
-            {% if forloop.first %}            
-              {% if request.session.filter_val == "mylist" %}
-                <button type="button" class="btn btn-primary" disabled="disabled">My Items</button>
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>
-                <select id="selto" class="selectpicker show-tick" 
-                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">            
-              {% elif request.session.filter_val == "grplist" %}
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
-                <button type="button" class="btn btn-primary" disabled="disabled">Group List</button>
-                <select id="selto" class="selectpicker show-tick"
-                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">        
-              {% elif request.session.filter_val %}
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
-                <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>    
-                <select id="selto" class="selectpicker show-tick" data-style="btn-primary" 
-                  title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">
-              {% endif %}
-            {% endif %}
-
-            {% if request.session.filter_val == u.user.username %}
-              <option value="{{ u.user }}" selected>{{ u.res_name }}</option>
-            {% else %}
-              <option value="{{ u.user }}">{{ u.res_name }}</option>
-            {% endif %}
-          {% empty %}
-          {% endfor %}
-                </select>          
-        </td>
         <td align="right" class="NormalText">
           <a class="btn btn-outline-primary" href="{% url 'todo_create' %}" data-toggle="tooltip" title="Create new item"><span class="oi oi-plus"></span></a>
           <a class="btn btn-outline-primary" data-toggle="tooltip" title="Edit selected item"
@@ -69,7 +34,9 @@ $(function () {
              href="javascript:void(0)"
              onclick="getActionButtonClicked(document.form1, '{% url 'todo_delete' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
              <span class="oi oi-trash"></span>
-          </a>          
+          </a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a class="btn btn-outline-primary" href="{% url 'todo_index' %}" data-toggle="tooltip" title="View Tabular">
+            <span class="oi oi-spreadsheet"></span></a>
         </td>        
     </tr>
     </table>

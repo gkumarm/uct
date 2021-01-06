@@ -14,11 +14,7 @@ $(function () {
       <div class="col row-g">
       <table id="actionPanel" width="100%" cellpadding="1" cellspacing="0" border="0" class="ta">
       <tr valign="middle" class="st">
-          <td align="left" class="NormalText">
-            <a class="btn btn-outline-primary" href="{% url 'todo_heatmap' %}" data-toggle="tooltip" title="View Heatmap">
-              <span class="oi oi-bar-chart"></span></a>
-          </td>              
-          <td align="middle">
+          <td>
             {% for u in res %}
               {% if forloop.first %}            
                 {% if request.session.filter_val == "mylist" %}
@@ -49,6 +45,26 @@ $(function () {
                   </select>          
           </td>
           <td align="right" class="NormalText">
+
+            <select id="selstatus" class="selectpicker show-tick" data-style="btn-primary" 
+                title="Status Filter" onchange="location = '{{ request.path }}?status='+this.value;">
+              {% if request.session.status_val == 'open' %}
+                <option value="open" selected>Open</option>
+              {% else %}
+                <option value="open">Open</option>
+              {% endif %}
+              {% if request.session.status_val == 'completed' %}
+                <option value="completed" selected>Completed</option>
+              {% else %}
+                <option value="completed">Completed</option>
+              {% endif %}
+              {% if request.session.status_val == 'all' %}
+                <option value="all" selected>All</option>
+              {% else %}
+                <option value="all">All</option>
+              {% endif %}
+            </select>&nbsp;&nbsp;
+
             <a class="btn btn-outline-primary" href="{% url 'todo_create' %}" data-toggle="tooltip" title="Create new item"><span class="oi oi-plus"></span></a>
             <a class="btn btn-outline-primary" data-toggle="tooltip" title="Edit selected item"
                href="javascript:void(0)"
@@ -69,7 +85,9 @@ $(function () {
                href="javascript:void(0)"
                onclick="getActionButtonClicked(document.form1, '{% url 'todo_delete' '999' %}', '?next={{request.path}}?{{request.GET.urlencode}}')"/>
                <span class="oi oi-trash"></span>
-            </a>          
+            </a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="btn btn-outline-primary" href="{% url 'todo_heatmap' %}" data-toggle="tooltip" title="View Heatmap">
+              <span class="oi oi-bar-chart"></span></a>
           </td>
       </tr>
       </table>
@@ -83,7 +101,7 @@ $(function () {
             <th style="width: 43%" scope="col">Description</th>
             <th style="width: 10%" scope="col">Assigned To</th>
             <th style="width: 15%" scope="col">Start/End Date</th>
-            <th style="width: 15%" scope="col">Todo Type</th>
+            <th style="width: 15%" scope="col">Type</th>
             <th style="width: 15%" scope="col">Status</th>
           </tr>
         </thead>
