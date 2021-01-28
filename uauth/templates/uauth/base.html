@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CRUD app</title>
+    <title>UCTodo</title>
     <link rel="shortcut icon" href="/static/uct/img/todoapp.ico">
 
     <script type="text/javascript" src="/static/jquery-3.3.1/js/jquery.min.js"></script>    
@@ -27,10 +27,29 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+
       <a class="navbar-brand" href="{% url 'home' %}">
         <img src="{% static 'uct/img/todoapp.png' %}" width="50" height="50" class="d-inline-block align-middle" alt="ToDoApp" loading="lazy"/>
         <span class="font-weight-bold">&nbsp;TODO://</span>
       </a>
+
+      {% if request.session.can_edit_master_data %}
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item"><a class="nav-link text-primary" href="{% url 'home' %}">TODO List</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="{% url 'todo_heatmap' %}">Heatmap</a></li>
+          <li class="nav-item dropdown">
+            <a aria-expanded="false" aria-haspopup="true" 
+              class="font-weight-bold nav-link text-primary dropdown-toggle" 
+              data-toggle="dropdown" href="#" role="button">
+              Admin
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/admin/todo/context">Manage Contexts</a>
+              <a class="dropdown-item" href="/admin/todo/todotype">Manage TodoTypes</a>
+            </div>
+          </li>
+        </ul>
+      {% endif %}
   
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
@@ -47,10 +66,7 @@
           </ul>
         </form>
       </div>
-
     </nav>
-
-</div>
     {% block content %}
     {% endblock %}
   </body>
