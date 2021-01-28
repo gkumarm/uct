@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import UserForm
 from todo.forms import ResourceForm
+from todo.models import Resource
 
 # Create your views here.
 def home(request):
@@ -67,6 +68,9 @@ def user_login(request):
 		if user:
 			if user.is_active:
 				login(request,user)
+				res = Resource.objects.get (user__username = username)
+				request.session ['can_edit_master_data'] = res.can_edit_master_data
+				print ('Can edit flag: ', res.can_edit_master_data)
 				return HttpResponseRedirect(reverse('todo_index'))
 			else:
 				return HttpResponse("Your account was inactive.")
