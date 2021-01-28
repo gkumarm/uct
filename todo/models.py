@@ -4,17 +4,18 @@ from django.contrib.auth.models import Group, User
 class ResourceGroup (models.Model):
 	user           = models.ForeignKey(User,on_delete=models.CASCADE)
 	group          = models.ForeignKey(Group,on_delete=models.CASCADE)
-	can_see_group_list  = models.BooleanField (default=False)
-	can_edit_group_list = models.BooleanField (default=False)
+	can_see_group_list   = models.BooleanField (default=False)
+	can_edit_group_list  = models.BooleanField (default=False)
 
 	class Meta:
 		unique_together = ('user', 'group',)
 
 	def __str__(self):
-		return "User: "                + self.user.username            + "\n" + \
-		       "Group: "               + self.group.name               + "\n" + \
-			   "can_see_group_list: "  + str(self.can_see_group_list)  + "\n" + \
-			   "can_edit_group_list: " + str(self.can_edit_group_list) + "\n"
+		return "User: "                 + self.user.username            + "\n" + \
+		       "Group: "                + self.group.name               + "\n" + \
+		       "can_edit_master_data: " + str(self.can_edit_master_data)  + "\n" + \
+			   "can_see_group_list: "   + str(self.can_see_group_list)  + "\n" + \
+			   "can_edit_group_list: "  + str(self.can_edit_group_list) + "\n"
 
 class Resource (models.Model):
 	user           = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -22,7 +23,8 @@ class Resource (models.Model):
 	added_date     = models.DateTimeField (auto_now_add=True)
 	portfolio_site = models.URLField(blank=True)
 	profile_pic    = models.ImageField(upload_to='profile_pics',blank=True)
-
+	can_edit_master_data = models.BooleanField (default=False)
+	
 	def __str__(self):
 		return self.res_name + ' (' + self.user.username + ')'
 
