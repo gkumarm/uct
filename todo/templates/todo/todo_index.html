@@ -18,17 +18,17 @@ $(function () {
             {% for u in res %}
               {% if forloop.first %}            
                 {% if request.session.filter_val == "mylist" %}
-                  <button type="button" class="btn btn-primary" disabled="disabled">My Items</button>
+                  <button type="button" class="btn btn-primary" disabled="disabled">My List</button>
                   <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>
                   <select id="selto" class="selectpicker show-tick" 
                     title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">            
                 {% elif request.session.filter_val == "grplist" %}
-                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My List</a>
                   <button type="button" class="btn btn-primary" disabled="disabled">Group List</button>
                   <select id="selto" class="selectpicker show-tick"
                     title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">        
                 {% elif request.session.filter_val %}
-                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My Items</a>
+                  <a class="btn btn-outline-primary" href="{{ request.path }}?filter=mylist">My List</a>
                   <a class="btn btn-outline-primary" href="{{ request.path }}?filter=grplist">Group List</a>    
                   <select id="selto" class="selectpicker show-tick" data-style="btn-primary" 
                     title="Assigned To" onchange="location = '{{ request.path }}?filter='+this.value;">
