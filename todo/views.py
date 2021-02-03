@@ -8,8 +8,8 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
 
-from .forms import TodoForm
-from .models import Todo, Resource, Context, TodoStatus, ResourceGroup
+from .forms import TodoForm, TodoNotesForm
+from .models import Todo, Resource, Context, TodoStatus, ResourceGroup, TodoNotes
 import util.uctutil as uu
 
 #home view for posts. Posts are displayed in a list
@@ -61,7 +61,7 @@ class TodoIndexView(ListView):
       self.request.session['status_val'] = status_param
       filters.add (~Q(status_id__code='COM'), Q.AND)
 
-    print ('10---------->Filters', filters)
+#    print ('10---------->Filters', filters)
     
     ob = ['-added_date', 'context_id']
     qs = Todo.objects.filter (filters).order_by(*ob)
@@ -129,22 +129,48 @@ def todo_close(request, pk, template_name='todo/todo_close.html'):
 
 @login_required (redirect_field_name='next')
 def todo_edit(request, pk, template_name='todo/todo_edit.html'):
-    todo = get_validated_todo (pk, request.user)
-#    todo= get_object_or_404(Todo, pk=pk)
-    form = TodoForm(request.user, 'edit', request.POST or None, instance=todo)
+  form = None
+  formNote = None
+  notes = ''
+  if request.method == 'POST':
+    if request.POST.get('post') == 'Post':
+      formNote = TodoNotesForm (data=request.POST)
+      if formNote.is_valid():
+        formNote.save ()
+
+      todo = get_object_or_404(Todo, pk=pk)
+      form = TodoForm(request.user, 'edit', None, instance=todo)
+      form.fields['created_by'].initial = todo.added_user
+
+      ob = ['-added_date',]
+      notes = TodoNotes.objects.filter(todo=todo).order_by (*ob)
+
+      return render(request, template_name, {'form':form, 'formNote': formNote, 'notes':notes})
+    else:
+      todo = get_validated_todo (pk, request.user)
+      form = TodoForm(request.user, 'edit', request.POST or None, instance=todo)
+      if form.is_valid():
+          form.save()
+    next = request.GET.get("next", None)
+    if next is None:
+      return redirect('todo_index')
+    else:
+      return redirect (next)
+  elif request.method == 'GET':
+    todo = get_object_or_404(Todo, pk=pk)
+    form = TodoForm(request.user, 'edit', None, instance=todo)
     form.fields['created_by'].initial = todo.added_user
-    if form.is_valid():
-        form.save()
-        next = request.GET.get("next", None)
-        if next is None:
-          print ('Next is none.............')
-          return redirect('todo_index')
-        else:
-          print ('Next is Not none.............', next)
-          return redirect (next)
+    ob = ['-added_date',]
+    notes = TodoNotes.objects.filter(todo=todo).order_by (*ob)
+    formNote = TodoNotesForm (initial={
+      'todo': Todo.objects.get(id=pk),
+      'added_user': Resource.objects.filter(user=request.user).first(),
+    });
+#  else:
+#    return redirect('todo_index')
 
-    return render(request, template_name, {'form':form})
-
+  return render(request, template_name, {'form':form, 'formNote': formNote, 'notes':notes})
+  
 @login_required (redirect_field_name='next')
 def todo_copyas(request, pk, template_name='todo/todo_copyas.html'):
     todo = get_validated_todo (pk, request.user)
@@ -199,6 +225,6 @@ def get_validated_todo (pk, user):
                 Q(Q(assigned_to__user=user) | 
                   Q(Q(added_user__user=user) & Q(assigned_to__user__isnull=True)) |
                   Q(group__id__in=grp)))
-    print (filters)
+#    print (filters)
     return get_object_or_404(Todo, filters)
 #    return Todo.objects.get(filters)

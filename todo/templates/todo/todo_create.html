@@ -4,10 +4,9 @@
 {% block content %}
 {{ form.media }}
 <br>
-<div class="container">
-<div class="jumbotron">
-    <h1 class="display-6">New TODO</h1>
-    <hr class="my-4">
+<div class="container" style="background-color: #e9ecef;">
+  <h1 class="display-6">New TODO</h1>
+  <hr >
     {% crispy form %}
 <script type="text/javascript">
 	$("#id_start_date").datetimepicker({
@@ -17,7 +16,6 @@
       format:'d-M-Y',timepicker: false
 	});	
 </script>    
-  </div>
 </div>
 {% endblock %}
 
