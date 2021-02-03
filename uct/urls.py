@@ -29,5 +29,6 @@ urlpatterns = [
     re_path(r'^$',home,name='home'),
     path('', include('todo.urls')),
     path('', include("uauth.urls")),
+    path('', include("ucm.urls")),
     re_path(r'^logout/$', user_logout, name='logout'),
 ]

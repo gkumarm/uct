@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # Own Apps
     'todo',
     'uauth',
+    'ucm',
 ]
 
 MIDDLEWARE = [
@@ -65,8 +66,8 @@ ROOT_URLCONF = 'uct.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join (BASE_DIR, "templates")],
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',        
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,7 +125,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # print ("Static Root", STATIC_ROOT)
 # print ("BASE DIR", BASE_DIR)
 # print ("os.path.dirname(BASE_DIR),", os.path.dirname(BASE_DIR))
