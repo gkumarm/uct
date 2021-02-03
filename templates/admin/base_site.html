@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}UCTodo | Admin Site{% endblock %}
+{% block branding %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block bodyclass %}bg-light{% endblock %}
+
+{% block extrastyle %}
+    <link rel="shortcut icon" href="/static/uct/img/todoapp.ico">
+
+    <script type="text/javascript" src="/static/jquery-3.3.1/js/jquery.min.js"></script>    
+    <script type="text/javascript" src="/static/popper.js-1.14.3/js/popper.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap-4.5.3-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/bootstrap-4.5.3-dist/css/bootstrap.min.css">
+
+{% endblock %}
+
+{% block bodyheader %}
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+  <a class="navbar-brand" href="{% url 'home' %}">
+    <img src="{% static 'uct/img/todoapp.png' %}" width="50" height="50" class="d-inline-block align-middle" alt="ToDoApp" loading="lazy"/>
+    <span class="font-weight-bold">&nbsp;TODO://</span>
+  </a>
+
+  {% if user.is_authenticated_commented %}
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item"><a class="nav-link text-primary" href="{% url 'home' %}">TODO List</a></li>
+      <li class="nav-item"><a class="nav-link text-primary" href="{% url 'todo_heatmap' %}">Heatmap</a></li>
+      <li class="nav-item dropdown">
+        <a aria-expanded="false" aria-haspopup="true" 
+          class="font-weight-bold nav-link text-primary dropdown-toggle" 
+          data-toggle="dropdown" href="#" role="button">
+          Admin
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/admin/todo/context">Manage Contexts</a>
+          <a class="dropdown-item" href="/admin/todo/todotype">Manage TodoTypes</a>
+        </div>
+      </li>
+    </ul>
+  {% endif %}
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <ul class="navbar-nav mr-auto">&nbsp;&nbsp;
+      {% if user.is_authenticated %}
+        <a class="dropdown-item" href="{% url 'logout' %}">Logout ({{request.user.username}})</a>
+      {% else %}
+        <a class="dropdown-item" href="{% url 'uauth:register' %}">Register</a>
+      {% endif %}
+      </ul>
+    </form>
+  </div>
+</nav>
+{% endblock %}
+
+{% block bodyfooter %}
+    </div>
+{% endblock %}
