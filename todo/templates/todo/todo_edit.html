@@ -4,11 +4,11 @@
 {% block content %}
 {{ form.media }}
 <br>
-<div class="container">
-<div class="jumbotron">
-    <h1 class="display-6">Edit TODO</h1>
-    <hr class="my-4">
+<div class="container" style="background-color: #e9ecef;">
+  <h1 class="display-6">Edit TODO</h1>
+  <hr >
     {% crispy form %}
+</div>
 <script type="text/javascript">
 	$("#id_start_date").datetimepicker({
       format:'d-M-Y',timepicker: false
@@ -16,7 +16,19 @@
 	$("#id_end_date").datetimepicker({
       format:'d-M-Y',timepicker: false
 	});	
-</script>    
-  </div>
+</script><br> 
+
+<div class="container" style="background-color: #e9ecef;">
+  {% for note in notes.all %}
+  {% if forloop.first %}
+    <P>{{ notes.count }} Notes</P>
+  {% endif %}
+    <b>{{ note.added_user }}</b> on {{ note.added_date }}<br>
+    <P>{{ note.notes }}</P>
+  {% empty %}
+    <P>No notes for this task</P>
+  {% endfor %}
+  {% crispy formNote %} <br>
+  <div id='form-errors'>{{ formNote.errors }}</div>  
 </div>
 {% endblock %}
