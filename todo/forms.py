@@ -6,7 +6,7 @@ from crispy_forms.bootstrap import FormActions
 from django.contrib.auth.models import Group, User
 from datetime import date
 
-from .models import Todo, TodoType, Resource, Context, TodoStatus, ResourceGroup
+from .models import Todo, TodoType, Resource, Context, TodoStatus, ResourceGroup, TodoNotes
 
 STATES = (
 	('', 'Choose...'),
@@ -48,16 +48,16 @@ class TodoForm (forms.ModelForm):
 		model = Todo
 		fields = [
 			'assigned_to', 'group', 'context_id', 'todo_type','short_desc',
-			'status','effort_type','effort','start_date', 'end_date','added_user'
+			'status','effort_type','effort','start_date', 'end_date',
 		]
 
 	def clean(self):
-		print ("Calling Clean Start date --> (1)")
+#		print ("Calling Clean Start date --> (1)")
 		start_date = self.cleaned_data['start_date']
 		end_date = self.cleaned_data['end_date']
 		if start_date and end_date and end_date < start_date:
 			raise forms.ValidationError('End Date cannot be before Start Date.')
-		print ("Calling Clean Start date --> (2)",start_date)
+#		print ("Calling Clean Start date --> (2)",start_date)
 		super(TodoForm, self).clean()
 
 	def __init__(self, user, mode, *args, **kwargs):
@@ -118,7 +118,39 @@ class TodoForm (forms.ModelForm):
 			)
 		)
 
+class TodoNotesForm (forms.ModelForm):
+	class Meta():
+		model = TodoNotes
+		fields = ('todo', 'added_user', 'notes')
+		widgets = {
+			'todo': forms.HiddenInput(),
+			'added_user': forms.HiddenInput(),
+		}
 
+#	def clean(self):
+#		print ("Calling Clean Start date --> (1)")
+#		self.cleaned_data['id_todo'] = 95
+#		return super(TodoNotesForm, self).clean()
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'POST'
+		self.helper.layout = Layout (
+			Row(
+				Column(HTML('<textarea class="form-control" placeholder="Add a note here..." name="notes" id="notes" maxlength="300"></textarea>'),
+					css_class='form-group col-md-11 mb-0'),
+				Column(
+				FormActions(
+        			Submit( 'post', 'Post', css_class = 'btn btn-success')),
+					css_class='form-group col-md-1 mb-0'),
+				css_class='form-row'
+			),
+			Row (
+				Column('todo'),
+				Column('added_user'),
+			)
+		)
 
 #######################################################
 class TodoNForm (forms.ModelForm):
