@@ -15,20 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+#from django.conf.urls import handler400, handler403, handler404, handler500
 
-from uauth.views import user_logout, home
+#from uauth.views import logout, home, error_404, error_500
 
-#handler404 = 'uct.views.error_404'
-#handler500 = 'uct.views.error_500'
-#handler403 = 'uct.views.error_403'
 #handler400 = 'uct.views.error_400'
+#handler403 = 'uct.views.error_403'
+# handler404 = 'uauth.views.error_404'
+# handler500 = 'uauth.views.error_500'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    re_path(r'^$',home,name='home'),
-    path('', include('todo.urls')),
     path('', include("uauth.urls")),
+    path('', include('todo.urls')),
     path('', include("ucm.urls")),
-    re_path(r'^logout/$', user_logout, name='logout'),
 ]

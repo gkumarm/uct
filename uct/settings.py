@@ -9,12 +9,12 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+from django.contrib.messages import constants as messages
 from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -66,8 +66,8 @@ ROOT_URLCONF = 'uct.urls'
 
 TEMPLATES = [
     {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join (BASE_DIR, "templates")],
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',        
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -140,8 +140,24 @@ STATICFILES_DIRS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = '/home/'
+LOGIN_REDIRECT_URL = '/home/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
+MESSAGE_LEVEL = messages.INFO
+# messages.DEBUG     #10 - Development-related messages that will be ignored (or removed) in a production deployment
+# messages.INFO      #20 - Informational messages for the user -- Deafulat
+# messages.SUCCESS   #25 - success An action was successful
+# messages.WARNING   #30 - warning A failure did not occur but may be imminent
+# messages.ERROR     #40 - error   An action was not successful or some other failure occurred
 
 # if DEBUG:
 #     import logging

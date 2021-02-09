@@ -1,3 +1,6 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group, User
 from django.http import HttpResponse, Http404
 from django.utils import timezone
 from django.http import HttpResponseRedirect
@@ -5,8 +8,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from dal import autocomplete
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group, User
 
 from .forms import TodoForm, TodoNotesForm
 from .models import Todo, Resource, Context, TodoStatus, ResourceGroup, TodoNotes
@@ -133,7 +134,7 @@ def todo_edit(request, pk, template_name='todo/todo_edit.html'):
   formNote = None
   notes = ''
   if request.method == 'POST':
-    if request.POST.get('post') == 'Post':
+    if request.POST.get('post') == 'Post':  # Block for post notes on task
       formNote = TodoNotesForm (data=request.POST)
       if formNote.is_valid():
         formNote.save ()
@@ -144,7 +145,7 @@ def todo_edit(request, pk, template_name='todo/todo_edit.html'):
 
       ob = ['-added_date',]
       notes = TodoNotes.objects.filter(todo=todo).order_by (*ob)
-
+      messages.success(request, 'New note added!')
       return render(request, template_name, {'form':form, 'formNote': formNote, 'notes':notes})
     else:
       todo = get_validated_todo (pk, request.user)
