@@ -78,6 +78,9 @@ class Todo (models.Model):
 	added_user   = models.ForeignKey ('Resource', on_delete=models.DO_NOTHING, related_name='added_user', null=True, blank=True)
 	added_date   = models.DateTimeField (auto_now_add=True)
 
+	modified_user = models.ForeignKey ('Resource', on_delete=models.DO_NOTHING, related_name='modified_user', null=True, blank=True)
+	modified_date = models.DateTimeField (auto_now=True)
+
 	def __str__(self):
 		return self.short_desc
 

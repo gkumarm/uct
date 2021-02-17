@@ -102,9 +102,11 @@ def todo_create(request):
     form = TodoForm(request.user, 'create', request.POST)
     if form.is_valid():
       instance = form.save (commit=False)
-      print ('Adding record--------------->', request.user)
-      instance.added_user = Resource.objects.filter(user=request.user).first()
+      res = Resource.objects.filter(user=request.user).first()
+      instance.added_user = res
+      instance.modified_user = res
       instance.save()
+      print ('Adding record--------------->', request.user, '->', instance.id)
       return redirect('todo_index')
 
   return render(request,'todo/todo_create.html',{'form': form})
@@ -115,8 +117,11 @@ def todo_close(request, pk, template_name='todo/todo_close.html'):
     form = TodoForm(request.user, 'close', request.POST or None, instance=todo)
     form.fields['created_by'].initial = todo.added_user
     if form.is_valid():
+        print ('Completing record--------------->', request.user, '->', pk)            
         instance = form.save (commit=False)
         instance.status = TodoStatus.objects.filter (code='COM').first()
+        res = Resource.objects.filter(user=request.user).first()
+        instance.modified_user = res
         instance.save()
         next = request.GET.get("next", None)
         if next is None:
@@ -137,6 +142,7 @@ def todo_edit(request, pk, template_name='todo/todo_edit.html'):
     if request.POST.get('post') == 'Post':  # Block for post notes on task
       formNote = TodoNotesForm (data=request.POST)
       if formNote.is_valid():
+        print ('Adding Notes--------------->', request.user, '->', pk)
         formNote.save ()
 
       todo = get_object_or_404(Todo, pk=pk)
@@ -151,7 +157,11 @@ def todo_edit(request, pk, template_name='todo/todo_edit.html'):
       todo = get_validated_todo (pk, request.user)
       form = TodoForm(request.user, 'edit', request.POST or None, instance=todo)
       if form.is_valid():
-          form.save()
+        print ('Editing record--------------->', request.user, '->', pk)
+        instance = form.save (commit=False)
+        res = Resource.objects.filter(user=request.user).first()
+        instance.modified_user = res
+        instance.save()
     next = request.GET.get("next", None)
     if next is None:
       return redirect('todo_index')
@@ -179,9 +189,12 @@ def todo_copyas(request, pk, template_name='todo/todo_copyas.html'):
     form = TodoForm(request.user, 'copyas', request.POST or None, instance=todo)
     form.fields['created_by'].initial = todo.added_user
     if form.is_valid():
+        print ('CopyAs record--------------->', request.user, '->', pk)
         instance = form.save (commit=False)
-        instance.added_user = Resource.objects.filter(user=request.user).first()
+        res = Resource.objects.filter(user=request.user).first()        
+        instance.added_user = res
         instance.added_date = None
+        instance.modified_user = res
         instance.save()
         next = request.GET.get("next", None)
         if next is None:
@@ -198,6 +211,7 @@ def todo_delete(request, pk, template_name='todo/todo_delete.html'):
     form = TodoForm(request.user, 'delete', request.POST or None, instance=todo)    
     form.fields['created_by'].initial = todo.added_user
     if form.is_valid():
+        print ('Deleting record--------------->', request.user, '->', pk)
         todo.delete()
         next = request.GET.get("next", None)
         if next is None:
