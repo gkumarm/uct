@@ -12,3 +12,10 @@ def get_name_by_index(nlist, pos):
 def multadd(a,b,c):
 #	print (pos-2, "->", type (nlist), list (list (nlist)[0])[1][2])
 	return (a*b)+c
+
+@register.filter(name='expluralize')
+def expluralize(nCount,sText):
+	if nCount > 1:
+		return str(nCount) + ' ' + sText + 's'
+	else:
+		return str(nCount) + ' ' + sText

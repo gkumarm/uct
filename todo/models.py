@@ -85,7 +85,7 @@ class Todo (models.Model):
 		return self.short_desc
 
 class TodoNotes (models.Model):
-	todo       = models.ForeignKey ('Todo', on_delete=models.DO_NOTHING, null=False, blank=False)
+	todo       = models.ForeignKey ('Todo', on_delete=models.CASCADE, null=False, blank=False)
 	notes      = models.CharField (max_length=300, help_text='User log inforation ...', blank=False)
 	added_user = models.ForeignKey ('Resource', on_delete=models.DO_NOTHING, null=False, blank=True)
 	added_date = models.DateTimeField (auto_now_add=True)

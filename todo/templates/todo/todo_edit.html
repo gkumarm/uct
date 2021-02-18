@@ -1,5 +1,6 @@
 {% extends "uauth/base.html" %}
 {% load crispy_forms_tags %}
+{% load todo_extras %}
 
 {% block content %}
 {{ form.media }}
@@ -21,7 +22,7 @@
 <div class="container" style="background-color: #e9ecef;">
   {% for note in notes.all %}
   {% if forloop.first %}
-    <P>{{ notes.count }} Notes</P>
+    <P>{{ notes.count|expluralize:'Note' }}</P>
   {% endif %}
     <b>{{ note.added_user }}</b> on {{ note.added_date }}<br>
     <P>{{ note.notes }}</P>
