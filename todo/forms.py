@@ -29,14 +29,14 @@ class TodoForm (forms.ModelForm):
 					required=False, widget=autocomplete.ModelSelect2(url='context-autocomplete'))
 	todo_type     = forms.ModelChoiceField(queryset=TodoType.objects.all().order_by('name'), to_field_name='code', required=False)
 	status        = forms.ModelChoiceField(queryset=TodoStatus.objects.all().order_by('name'), to_field_name='code', required=False)
-	start_date    = forms.DateField (input_formats=['%d-%b-%Y'],
+	start_date    = forms.DateTimeField (input_formats=['%d-%b-%Y'],
                            label='Start Date',
                            required=False,
                            widget=forms.DateInput(
                                    format='%d-%b-%Y',
                                    attrs={'autocomplete': 'off', 'placeholder': 'Select a date', 'class': 'datepicker'})
                            )
-	end_date   = forms.DateField (input_formats=['%d-%b-%Y'],
+	end_date   = forms.DateTimeField (input_formats=['%d-%b-%Y'],
                            label='End Date',
                            required=False,
                            widget=forms.DateInput(
@@ -55,6 +55,7 @@ class TodoForm (forms.ModelForm):
 #		print ("Calling Clean Start date --> (1)")
 		start_date = self.cleaned_data['start_date']
 		end_date = self.cleaned_data['end_date']
+#		print (">>> Start-Date [", start_date.strftime("%Y-%m-%d %H:%M:%S"), " ", start_date.tzinfo, "] End-Date [", end_date.strftime("%Y-%m-%d %H:%M:%S"), "]")
 		if start_date and end_date and end_date < start_date:
 			raise forms.ValidationError('End Date cannot be before Start Date.')
 #		print ("Calling Clean Start date --> (2)",start_date)

@@ -29,5 +29,4 @@ urlpatterns = [
 
     path('', include("uauth.urls")),
     path('', include('todo.urls')),
-    path('', include("ucm.urls")),
 ]

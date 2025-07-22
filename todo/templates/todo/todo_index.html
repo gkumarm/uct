@@ -145,11 +145,11 @@ $(function () {
 
               {% if temp_rule_to_unhide %}
                 {% for linkpage in paginator.page_range %}
-                  {% ifequal linkpage page_obj.number %}
+                  {% if linkpage == page_obj.number %}
                     <button type="button" class="btn btn-secondary active" >{{ page_obj.number }}</button>
                   {% else %}
                     <a class="btn btn-secondary" href="{{ request.path }}?page={{ linkpage }}">{{ linkpage }}</a>
-                  {% endifequal %}
+                  {% endif %}
                 {% endfor %}
               {% endif %}
 
